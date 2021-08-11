@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,20 +15,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// GET routes
-Route::get('/products', function(){
-    return Product::all();
+// Route::resource('products', ProductController::class);
+
+// Public Routes
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/{product}', [ProductController::class, 'show']);
+Route::get('/products/search/{name}', [ProductController::class, 'search']);
+
+
+Route::group(['middleware'=>['auth:sanctum']], function() {
+    ROUTE::post('/products', [ProductController::class, 'store']);
+    ROUTE::put('/products/{id}', [ProductController::class, 'update']);
+    ROUTE::delete('/products/{id}', [ProductController::class, 'destroy']);
 });
 
-// POST routes
-ROUTE::post('/products', function(){
-    return Product::create([
-        'name'=>'Product One',
-        'slug' => 'product-one',
-        'description' => 'This is product one',
-        'price' => '99.99'
-    ]);
-});
+// // GET routes
+
+// Route::get('/products/{id}')
+
+// // POST routes
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
